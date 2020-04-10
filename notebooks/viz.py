@@ -33,11 +33,11 @@ def plot_scenario_overview(movements, scenario_infos, titles = None):
     
     fig, subps = plt.subplots(rows,cols,sharey='all', figsize=(4*cols,4*rows))
     
-    if type(subps) == np.array:
+    if type(subps) == np.ndarray:
         subps = subps.flatten()
     elif type(subps) != list:
         subps = [subps]
-    
+        
     for i, (m, si) in enumerate(zip(movements, scenario_infos)):
         ax = subps[i]
         if titles is None:
