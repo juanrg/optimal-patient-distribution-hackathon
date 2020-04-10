@@ -58,8 +58,8 @@ def demand_day_node_raw(node_capacity, demand_day, left_day, received_day, deman
 
 
 def demand_day_node(movements, scenario_info, day, node):
-    num_days = movements.shape[0]
-    num_nodes = movements.shape[1]
+    num_days = scenario_info['num_days']
+    num_nodes = scenario_info['num_nodes']
     
     movements_res = np.reshape(movements,(num_days,num_nodes,num_nodes))
     total_received_patients = 0
@@ -90,8 +90,8 @@ def calc_daily_deaths(movements, scenario_info):
     each is a ndarray, time as one dimension, hospital/node as another.
     For transport, the originating node is considered as source of death
     """
-    num_days = movements.shape[0]
-    num_nodes = movements.shape[1]
+    num_days = scenario_info['num_days']
+    num_nodes = scenario_info['num_nodes']
     
     deaths = { 'unattended' : np.zeros((num_days, num_nodes))
               , 'transport' : np.zeros((num_days, num_nodes))
@@ -109,8 +109,8 @@ def calc_daily_deaths(movements, scenario_info):
     return deaths
 
 def calc_total_deaths(movements, scenario_info):
-    num_days = movements.shape[0]
-    num_nodes = movements.shape[1]
+    num_days = scenario_info['num_days']
+    num_nodes = scenario_info['num_nodes']
     total = 0
     movements_res = np.reshape(movements,(num_days,num_nodes,num_nodes))
     for node in range(num_nodes):
@@ -132,16 +132,16 @@ def outgoing_list(movements):
             outgoing_list.append(calculate_outgoing(movements_res,day,node))
     return outgoing_list
 
-def generate_bounds(num_days, num_nodes, scenario_info):
+def generate_bounds(scenario_info):
     outgoing_list = list()
-    for day in range(num_days):
-        for outgoing_node in range(num_nodes):
-            for incoming_node in range(num_nodes):
+    for day in range(scenario_info['num_days']):
+        for outgoing_node in range(scenario_info['num_nodes']):
+            for incoming_node in range(scenario_info['num_nodes']):
                 outgoing_list.append((0,scenario_info['transport_capacities'][outgoing_node]))
     return outgoing_list
 
 def f_cons(node_id, day, scenario_info):
-    return lambda x: scenario_info['transport_capacities'][node_id] - calculate_outgoing(np.reshape(x,(num_days,num_nodes,num_nodes)),day ,node_id)
+    return lambda x: scenario_info['transport_capacities'][node_id] - calculate_outgoing(np.reshape(x,(scenario_info['num_days'],scenario_info['num_nodes'],scenario_info['num_nodes'])),day ,node_id)
 
 
 
